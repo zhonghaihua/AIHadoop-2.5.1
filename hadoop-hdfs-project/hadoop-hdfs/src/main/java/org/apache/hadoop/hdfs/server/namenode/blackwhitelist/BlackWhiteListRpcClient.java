@@ -43,7 +43,7 @@ public class BlackWhiteListRpcClient {
       List<String> namenodeHostnameList = BlackWhiteListUtils.getNamenodes(conf);
       if (namenodeHostnameList.contains(hostname)) {
         for (String nnHostname : namenodeHostnameList) {
-          refreshWiteListByNamenode(conf, nnHostname);
+          refreshWhiteListByNamenode(conf, nnHostname);
         }
         exitCode = 0;
       } else {
@@ -63,7 +63,7 @@ public class BlackWhiteListRpcClient {
    * @param hostname
    * @throws IOException
    */
-  public static void refreshWiteListByNamenode(
+  public static void refreshWhiteListByNamenode(
           Configuration conf, String hostname) throws IOException {
     BlackWhiteListProtocol proxy = getBlackWhiteListProxy(conf, hostname);
     proxy.refreshWhiteList();
@@ -71,7 +71,7 @@ public class BlackWhiteListRpcClient {
     if (N.equalsIgnoreCase(text.toString())) {
       LOG.info(hostname + " Black White List Service is Closed ");
     } else {
-      LOG.info(hostname + " Black White List Service  RefreshedWhiteList");
+      LOG.info(hostname + " Black White List Service Refreshed WhiteList Success");
     }
     RPC.stopProxy(proxy);
   }
@@ -89,7 +89,7 @@ public class BlackWhiteListRpcClient {
       List<String> namenodeHostnameList = BlackWhiteListUtils.getNamenodes(conf);
       if (namenodeHostnameList.contains(hostname)) {
         for (String nnHostname : namenodeHostnameList) {
-          refreshWiteListByNamenode(conf, nnHostname);
+          refreshBlackListByNamenode(conf, nnHostname);
         }
         exitCode = 0;
       } else {
@@ -118,7 +118,7 @@ public class BlackWhiteListRpcClient {
     if (N.equalsIgnoreCase(text.toString())) {
       LOG.info(hostname + " Black White List Service is Closed ");
     } else {
-      LOG.info(hostname + " Black White List Service  RefreshedWhiteList");
+      LOG.info(hostname + " Black White List Service Refreshed BlackList Success");
     }
     RPC.stopProxy(proxy);
   }
@@ -163,7 +163,7 @@ public class BlackWhiteListRpcClient {
     if (N.equalsIgnoreCase(text.toString())) {
       LOG.info(hostname + " Black White List Service is Closed ");
     } else {
-      LOG.info(hostname + " Black White List Service  RefreshedWhiteList");
+      LOG.info(hostname + " Black White List Service Refreshed WhiteListNamenodes Success");
     }
     RPC.stopProxy(proxy);
   }
@@ -209,7 +209,7 @@ public class BlackWhiteListRpcClient {
     if (N.equalsIgnoreCase(text.toString())) {
       LOG.info(hostname + " Black White List Service is Closed ");
     } else {
-      LOG.info(hostname + " Black White List Service  RefreshedWhiteList");
+      LOG.info(hostname + " Black White List Service Refreshed WhiteListDatanodes Success");
     }
     RPC.stopProxy(proxy);
   }
@@ -255,7 +255,7 @@ public class BlackWhiteListRpcClient {
     if (N.equalsIgnoreCase(text.toString())) {
       LOG.info(hostname + " Black White List Service is Closed ");
     } else {
-      LOG.info(hostname + " Black White List Service  RefreshedWhiteList");
+      LOG.info(hostname + " Black White List Service Refreshed WhiteListOtherCluster Success");
     }
     RPC.stopProxy(proxy);
   }
@@ -301,7 +301,7 @@ public class BlackWhiteListRpcClient {
     if (N.equalsIgnoreCase(text.toString())) {
       LOG.info(hostname + " Black White List Service is Closed ");
     } else {
-      LOG.info(hostname + " Black White List Service  RefreshedWhiteList");
+      LOG.info(hostname + " Black White List Service Refreshed SecurityDir Success");
     }
     RPC.stopProxy(proxy);
   }
@@ -339,7 +339,7 @@ public class BlackWhiteListRpcClient {
     if (N.equalsIgnoreCase(text.toString())) {
       LOG.info(hostname + " Black White List Service is Closed ");
     } else {
-      System.out.println("【" + hostname + "】" + "white list is: ");
+      System.out.println("【namenode: " + hostname + "】" + "white list is: ");
       System.out.println(text);
     }
     RPC.stopProxy(proxy);
@@ -378,7 +378,7 @@ public class BlackWhiteListRpcClient {
     if (N.equalsIgnoreCase(text.toString())) {
       LOG.info(hostname + " Black White List Service is Closed ");
     } else {
-      System.out.println("【" + hostname + "】" + "black list is: ");
+      System.out.println("【namenode: " + hostname + "】" + " black list is: ");
       System.out.println(text);
     }
     RPC.stopProxy(proxy);
@@ -417,7 +417,7 @@ public class BlackWhiteListRpcClient {
     if (N.equalsIgnoreCase(text.toString())) {
       LOG.info(hostname + " Black White List Service is Closed ");
     } else {
-      System.out.println("【" + hostname + "】" + "namenode list is: ");
+      System.out.println("【namenode: " + hostname + "】" + " namenode list is: ");
       System.out.println(text);
     }
     RPC.stopProxy(proxy);
@@ -456,7 +456,7 @@ public class BlackWhiteListRpcClient {
     if (N.equalsIgnoreCase(text.toString())) {
       LOG.info(hostname + " Black White List Service is Closed ");
     } else {
-      System.out.println("【" + hostname + "】" + "datanode list is: ");
+      System.out.println("【namenode: " + hostname + "】" + " datanode list is: ");
       System.out.println(text);
     }
     RPC.stopProxy(proxy);
@@ -495,7 +495,7 @@ public class BlackWhiteListRpcClient {
     if (N.equalsIgnoreCase(text.toString())) {
       LOG.info(hostname + " Black White List Service is Closed ");
     } else {
-      System.out.println("【" + hostname + "】" + "otherCluster list is: ");
+      System.out.println("【namenode: " + hostname + "】" + " otherCluster list is: ");
       System.out.println(text);
     }
     RPC.stopProxy(proxy);
@@ -534,7 +534,7 @@ public class BlackWhiteListRpcClient {
     if (N.equalsIgnoreCase(text.toString())) {
       LOG.info(hostname + " Black White List Service is Closed ");
     } else {
-      System.out.println("【" + hostname + "】" + "securityDir list is: ");
+      System.out.println("【namenode: " + hostname + "】" + " securityDir list is: ");
       System.out.println(text);
     }
     RPC.stopProxy(proxy);

@@ -114,24 +114,25 @@ public class BlackWhiteListConfigUtils {
    * @throws AuthorizationException
    */
   public static void authorizeWhiteList(String ip, String user) throws AuthorizationException {
-    if (user.toLowerCase().equals("hdfs") && !NAMENNODE_SET.contains(ip)) {
-      throw new AuthorizationException("your ip don't have enough auth to use hdfs user");
+    if (user.toLowerCase().equals("hdfs") &&
+            !NAMENNODE_SET.contains(ip) && !DATANODE_SET.contains(ip)) {
+      throw new AuthorizationException("your ip don't have enough auth to use 【hdfs】 user");
     }
     if (BLACKLIST_MAP.keySet().contains(ip)) {
       List<String> userList = BLACKLIST_MAP.get(ip).getUserList();
       if (userList.contains(user)) {
-        throw new AuthorizationException("your ip: " + ip +
-                " and user: " + user + " is in black list");
+        throw new AuthorizationException("your ip: 【" + ip +
+                "】 and user: 【" + user + "】 is in black list");
       }
     } else {
       if (!WHITELIST_MAP.keySet().contains(ip) && !NAMENNODE_SET.contains(ip)
               && !DATANODE_SET.contains(ip) && !OTHER_CLUSTER_SET.contains(ip)) {
-        throw new AuthorizationException("your ip " + ip + "is not in white list");
+        throw new AuthorizationException("your ip 【" + ip + "】 is not in white list");
       } else if (WHITELIST_MAP.keySet().contains(ip)) {
         List<String> userList = WHITELIST_MAP.get(ip).getUserList();
         if (!userList.contains(user)) {
-          throw new AuthorizationException("your ip " + ip + "is in white list, " +
-                  "but your user " + user + " is not in white list");
+          throw new AuthorizationException("your ip 【" + ip + "】 is in white list, " +
+                  "but your user 【" + user + "】 is not in white list");
         }
       }
     }
