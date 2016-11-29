@@ -62,6 +62,7 @@ import org.apache.hadoop.hdfs.protocol.RollingUpgradeInfo;
 import org.apache.hadoop.hdfs.protocol.SnapshotException;
 import org.apache.hadoop.hdfs.server.namenode.NameNode;
 import org.apache.hadoop.hdfs.server.namenode.TransferFsImage;
+import org.apache.hadoop.hdfs.server.namenode.blackwhitelist.BlackWhiteListRpcClient;
 import org.apache.hadoop.ipc.RPC;
 import org.apache.hadoop.ipc.RemoteException;
 import org.apache.hadoop.ipc.ProtobufRpcEngine;
@@ -698,6 +699,54 @@ public class DFSAdmin extends FsShell {
     return exitCode;
   }
 
+  public int refreshWhiteList() throws IOException {
+    return BlackWhiteListRpcClient.refreshWhiteList();
+  }
+
+  public int printWhiteList() throws IOException {
+    return BlackWhiteListRpcClient.printWhiteList();
+  }
+
+  public int refreshBlackList() throws IOException {
+    return BlackWhiteListRpcClient.refreshBlackList();
+  }
+
+  public int printBlackList() throws IOException {
+    return BlackWhiteListRpcClient.printBlackList();
+  }
+
+  public int refreshWhiteListNamenodes() throws IOException {
+    return BlackWhiteListRpcClient.refreshNameNode();
+  }
+
+  public int printWhiteListNamenodes() throws IOException {
+    return BlackWhiteListRpcClient.printNamenode();
+  }
+
+  public int refreshWhiteListDatanodes() throws IOException {
+    return BlackWhiteListRpcClient.refreshDataNode();
+  }
+
+  public int printWhiteListDatanodes() throws IOException {
+    return BlackWhiteListRpcClient.printDatanode();
+  }
+
+  public int refreshWhiteListOtherCluster() throws IOException {
+    return BlackWhiteListRpcClient.refreshOtherCluster();
+  }
+
+  public int printWhiteListOtherCluster() throws IOException {
+    return BlackWhiteListRpcClient.printOtherCluster();
+  }
+
+  public int refreshSecurityDir() throws IOException {
+    return BlackWhiteListRpcClient.refreshSecurityDir();
+  }
+
+  public int printSecurityDir() throws IOException {
+    return BlackWhiteListRpcClient.printSecurityDir();
+  }
+
   /**
    * Command to ask the namenode to set the balancer bandwidth for all of the
    * datanodes.
@@ -786,6 +835,18 @@ public class DFSAdmin extends FsShell {
       "\t[-rollEdits]\n" +
       "\t[-restoreFailedStorage true|false|check]\n" +
       "\t[-refreshNodes]\n" +
+      "\t[-refreshWhiteList]\n" +
+      "\t[-printWhiteList]\n" +
+      "\t[-refreshBlackList]\n" +
+      "\t[-printBlackList]\n" +
+      "\t[-refreshWhiteListNamenodes]\n" +
+      "\t[-printWhiteListNamenodes]\n" +
+      "\t[-refreshWhiteListDatanodes]\n" +
+      "\t[-printWhiteListDatanodes]\n" +
+      "\t[-refreshWhiteListOtherCluster]\n" +
+      "\t[-printWhiteListOtherCluster]\n" +
+      "\t[-refreshSecurityDir]\n" +
+      "\t[-printSecurityDir]\n" +
       "\t[" + SetQuotaCommand.USAGE + "]\n" +
       "\t[" + ClearQuotaCommand.USAGE +"]\n" +
       "\t[" + SetSpaceQuotaCommand.USAGE + "]\n" +
@@ -847,6 +908,30 @@ public class DFSAdmin extends FsShell {
       "\t\tall the replicas from them are replicated to other datanodes.\n" +
       "\t\tDecommissioned nodes are not automatically shutdown and \n" +
       "\t\tare not chosen for writing new replicas.\n";
+
+    String refreshWhiteList_help = "\t\trefresh the white list\n";
+
+    String printWhiteList_help = "\t\tprint the white list\n";
+
+    String refreshBlackList_help = "\t\trefresh the black list\n";
+
+    String printBlackList_help = "\t\tprint the black list\n";
+
+    String refreshWhiteListNamenodes_help = "\t\trefresh the namenodes in white list\n";
+
+    String printWhiteListNamenodes_help = "\t\tprint the namenodes in white list\n";
+
+    String refreshWhiteListDatanodes_help = "\t\trefresh the datanodes in white list\n";
+
+    String printWhiteListDatanodes_help = "\t\tprint the datanodes in white list\n";
+
+    String refreshWhiteListOtherCluster_help = "\t\trefresh the other cluster in white list\n";
+
+    String printWhiteListOtherCluster_help = "\t\tprint the other cluster in white list\n";
+
+    String refreshSecurityDir_help = "\t\trefresh the security in white list\n";
+
+    String printSecurityDir_help = "\t\tprint the security in white list\n";
 
     String finalizeUpgrade = "-finalizeUpgrade: Finalize upgrade of HDFS.\n" +
       "\t\tDatanodes delete their previous version working directories,\n" +
@@ -939,6 +1024,30 @@ public class DFSAdmin extends FsShell {
       System.out.println(restoreFailedStorage);
     } else if ("refreshNodes".equals(cmd)) {
       System.out.println(refreshNodes);
+    } else if ("refreshWhiteList".equals(cmd)) {
+      System.out.println(refreshWhiteList_help);
+    } else if ("printWhiteList".equals(cmd)) {
+      System.out.println(printWhiteList_help);
+    } else if ("refreshBlackList".equals(cmd)) {
+      System.out.println(refreshBlackList_help);
+    } else if ("printBlackList".equals(cmd)) {
+      System.out.println(printBlackList_help);
+    } else if ("refreshWhiteListNamenodes".equals(cmd)) {
+      System.out.println(refreshWhiteListNamenodes_help);
+    } else if ("printWhiteListNamenodes".equals(cmd)) {
+      System.out.println(printWhiteListNamenodes_help);
+    } else if ("refreshWhiteListDatanodes".equals(cmd)) {
+      System.out.println(refreshWhiteListDatanodes_help);
+    } else if ("printWhiteListDatanodes".equals(cmd)) {
+      System.out.println(printWhiteListDatanodes_help);
+    } else if ("refreshWhiteListOtherCluster".equals(cmd)) {
+      System.out.println(refreshWhiteListOtherCluster_help);
+    } else if ("printWhiteListOtherCluster".equals(cmd)) {
+      System.out.println(printWhiteListOtherCluster_help);
+    } else if ("refreshSecurityDir".equals(cmd)) {
+      System.out.println(refreshSecurityDir_help);
+    } else if ("printSecurityDir".equals(cmd)) {
+      System.out.println(printSecurityDir_help);
     } else if ("finalizeUpgrade".equals(cmd)) {
       System.out.println(finalizeUpgrade);
     } else if (RollingUpgradeCommand.matches("-"+cmd)) {
@@ -991,6 +1100,18 @@ public class DFSAdmin extends FsShell {
       System.out.println(rollEdits);
       System.out.println(restoreFailedStorage);
       System.out.println(refreshNodes);
+      System.out.println(refreshWhiteList_help);
+      System.out.println(printWhiteList_help);
+      System.out.println(refreshBlackList_help);
+      System.out.println(printBlackList_help);
+      System.out.println(refreshWhiteListNamenodes_help);
+      System.out.println(printWhiteListNamenodes_help);
+      System.out.println(refreshWhiteListDatanodes_help);
+      System.out.println(printWhiteListDatanodes_help);
+      System.out.println(refreshWhiteListOtherCluster_help);
+      System.out.println(printWhiteListOtherCluster_help);
+      System.out.println(refreshSecurityDir_help);
+      System.out.println(printSecurityDir_help);
       System.out.println(finalizeUpgrade);
       System.out.println(RollingUpgradeCommand.DESCRIPTION);
       System.out.println(metaSave);
@@ -1389,6 +1510,42 @@ public class DFSAdmin extends FsShell {
     } else if ("-refreshNodes".equals(cmd)) {
       System.err.println("Usage: java DFSAdmin"
                          + " [-refreshNodes]");
+    } else if ("-refreshWhiteList".equals(cmd)) {
+      System.err.println("Usage: java DFSAdmin"
+              + " [-refreshWhiteList]");
+    } else if ("-printWhiteList".equals(cmd)) {
+      System.err.println("Usage: java DFSAdmin"
+              + " [-printWhiteList]");
+    } else if ("-refreshBlackList".equals(cmd)) {
+      System.err.println("Usage: java DFSAdmin"
+              + " [-refreshBlackList]");
+    } else if ("-printBlackList".equals(cmd)) {
+      System.err.println("Usage: java DFSAdmin"
+              + " [-printBlackList]");
+    } else if ("-refreshWhiteListNamenodes".equals(cmd)) {
+      System.err.println("Usage: java DFSAdmin"
+              + " [-refreshWhiteListNamenodes]");
+    } else if ("-printWhiteListNamenodes".equals(cmd)) {
+      System.err.println("Usage: java DFSAdmin"
+              + " [-printWhiteListNamenodes]");
+    } else if ("-refreshWhiteListDatanodes".equals(cmd)) {
+      System.err.println("Usage: java DFSAdmin"
+              + " [-refreshWhiteListDatanodes]");
+    } else if ("-printWhiteListDatanodes".equals(cmd)) {
+      System.err.println("Usage: java DFSAdmin"
+              + " [-printWhiteListDatanodes]");
+    } else if ("-refreshWhiteListOtherCluster".equals(cmd)) {
+      System.err.println("Usage: java DFSAdmin"
+              + " [-refreshWhiteListOtherCluster]");
+    } else if ("-printWhiteListOtherCluster".equals(cmd)) {
+      System.err.println("Usage: java DFSAdmin"
+              + " [-printWhiteListOtherCluster]");
+    } else if ("-refreshSecurityDir".equals(cmd)) {
+      System.err.println("Usage: java DFSAdmin"
+              + " [-refreshSecurityDir]");
+    } else if ("-printSecurityDir".equals(cmd)) {
+      System.err.println("Usage: java DFSAdmin"
+              + " [-printSecurityDir]");
     } else if ("-finalizeUpgrade".equals(cmd)) {
       System.err.println("Usage: java DFSAdmin"
                          + " [-finalizeUpgrade]");
@@ -1451,6 +1608,18 @@ public class DFSAdmin extends FsShell {
       System.err.println("           [-rollEdits]");
       System.err.println("           [-restoreFailedStorage true|false|check]");
       System.err.println("           [-refreshNodes]");
+      System.err.println("           [-refreshWhiteList]");
+      System.err.println("           [-printWhiteList]");
+      System.err.println("           [-refreshBlackList]");
+      System.err.println("           [-printBlackList]");
+      System.err.println("           [-refreshWhiteListNamenodes]");
+      System.err.println("           [-printWhiteListNamenodes]");
+      System.err.println("           [-refreshWhiteListDatanodes]");
+      System.err.println("           [-printWhiteListDatanodes]");
+      System.err.println("           [-refreshWhiteListOtherCluster]");
+      System.err.println("           [-printWhiteListOtherCluster]");
+      System.err.println("           [-refreshSecurityDir]");
+      System.err.println("           [-printSecurityDir]");
       System.err.println("           [-finalizeUpgrade]");
       System.err.println("           ["+RollingUpgradeCommand.USAGE+"]");
       System.err.println("           [-metasave filename]");
@@ -1532,6 +1701,66 @@ public class DFSAdmin extends FsShell {
         return exitCode;
       }
     } else if ("-refreshNodes".equals(cmd)) {
+      if (argv.length != 1) {
+        printUsage(cmd);
+        return exitCode;
+      }
+    } else if ("-refreshWhiteList".equals(cmd)) {
+      if (argv.length != 1) {
+        printUsage(cmd);
+        return exitCode;
+      }
+    } else if ("-printWhiteList".equals(cmd)) {
+      if (argv.length != 1) {
+        printUsage(cmd);
+        return exitCode;
+      }
+    } else if ("-refreshBlackList".equals(cmd)) {
+      if (argv.length != 1) {
+        printUsage(cmd);
+        return exitCode;
+      }
+    } else if ("-printBlackList".equals(cmd)) {
+      if (argv.length != 1) {
+        printUsage(cmd);
+        return exitCode;
+      }
+    } else if ("-refreshWhiteListNamenodes".equals(cmd)) {
+      if (argv.length != 1) {
+        printUsage(cmd);
+        return exitCode;
+      }
+    } else if ("-printWhiteListNamenodes".equals(cmd)) {
+      if (argv.length != 1) {
+        printUsage(cmd);
+        return exitCode;
+      }
+    } else if ("-refreshWhiteListDatanodes".equals(cmd)) {
+      if (argv.length != 1) {
+        printUsage(cmd);
+        return exitCode;
+      }
+    } else if ("-printWhiteListDatanodes".equals(cmd)) {
+      if (argv.length != 1) {
+        printUsage(cmd);
+        return exitCode;
+      }
+    } else if ("-refreshWhiteListOtherCluster".equals(cmd)) {
+      if (argv.length != 1) {
+        printUsage(cmd);
+        return exitCode;
+      }
+    } else if ("-printWhiteListOtherCluster".equals(cmd)) {
+      if (argv.length != 1) {
+        printUsage(cmd);
+        return exitCode;
+      }
+    } else if ("-refreshSecurityDir".equals(cmd)) {
+      if (argv.length != 1) {
+        printUsage(cmd);
+        return exitCode;
+      }
+    } else if ("-printSecurityDir".equals(cmd)) {
       if (argv.length != 1) {
         printUsage(cmd);
         return exitCode;
@@ -1634,6 +1863,30 @@ public class DFSAdmin extends FsShell {
         exitCode = restoreFailedStorage(argv[i]);
       } else if ("-refreshNodes".equals(cmd)) {
         exitCode = refreshNodes();
+      } else if ("-refreshWhiteList".equals(cmd)) {
+        exitCode = refreshWhiteList();
+      } else if ("-printWhiteList".equals(cmd)) {
+        exitCode = printWhiteList();
+      } else if ("-refreshBlackList".equals(cmd)) {
+        exitCode = refreshBlackList();
+      } else if ("-printBlackList".equals(cmd)) {
+        exitCode = printBlackList();
+      } else if ("-refreshWhiteListNamenodes".equals(cmd)) {
+        exitCode = refreshWhiteListNamenodes();
+      } else if ("-printWhiteListNamenodes".equals(cmd)) {
+        exitCode = printWhiteListNamenodes();
+      } else if ("-refreshWhiteListDatanodes".equals(cmd)) {
+        exitCode = refreshWhiteListDatanodes();
+      } else if ("-printWhiteListDatanodes".equals(cmd)) {
+        exitCode = printWhiteListDatanodes();
+      } else if ("-refreshWhiteListOtherCluster".equals(cmd)) {
+        exitCode = refreshWhiteListOtherCluster();
+      } else if ("-printWhiteListOtherCluster".equals(cmd)) {
+        exitCode = printWhiteListOtherCluster();
+      } else if ("-refreshSecurityDir".equals(cmd)) {
+        exitCode = refreshSecurityDir();
+      } else if ("-printSecurityDir".equals(cmd)) {
+        exitCode = printSecurityDir();
       } else if ("-finalizeUpgrade".equals(cmd)) {
         exitCode = finalizeUpgrade();
       } else if (RollingUpgradeCommand.matches(cmd)) {

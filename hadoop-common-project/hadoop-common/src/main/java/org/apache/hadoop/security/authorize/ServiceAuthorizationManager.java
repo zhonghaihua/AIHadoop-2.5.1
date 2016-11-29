@@ -35,6 +35,7 @@ import org.apache.hadoop.security.SecurityUtil;
 import org.apache.hadoop.security.UserGroupInformation;
 
 import com.google.common.annotations.VisibleForTesting;
+import org.apache.hadoop.security.blackwhitelist.BlackWhiteListConfigUtils;
 
 /**
  * An authorization manager which handles service-level authorization
@@ -43,6 +44,7 @@ import com.google.common.annotations.VisibleForTesting;
 @InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
 @InterfaceStability.Evolving
 public class ServiceAuthorizationManager {
+  private static final Log LOG = LogFactory.getLog(ServiceAuthorizationManager.class);
   private static final String HADOOP_POLICY_FILE = "hadoop-policy.xml";
 
   private volatile Map<Class<?>, AccessControlList> protocolToAcl =
@@ -80,6 +82,18 @@ public class ServiceAuthorizationManager {
                                Configuration conf,
                                InetAddress addr
                                ) throws AuthorizationException {
+    if (BlackWhiteListConfigUtils.WHITE_LIST_ENABLE_VALUE) {
+      String clientIp = addr.toString().replaceAll("/", "").trim();
+      String clientUser = user.getUserName().toString().trim();
+      BlackWhiteListConfigUtils.authorizeWhiteList(clientIp, clientUser);
+    } else {
+      LOG.debug("BlackWhiteList service is disable!");
+    }
+
+    if (protocol.getName().contains("BlackWhiteListProtocol")) {
+      return;
+    }
+
     AccessControlList acl = protocolToAcl.get(protocol);
     if (acl == null) {
       throw new AuthorizationException("Protocol " + protocol + 

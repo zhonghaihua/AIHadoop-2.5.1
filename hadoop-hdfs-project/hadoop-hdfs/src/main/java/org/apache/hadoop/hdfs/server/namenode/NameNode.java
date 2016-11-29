@@ -43,6 +43,7 @@ import org.apache.hadoop.hdfs.protocol.HdfsConstants;
 import org.apache.hadoop.hdfs.server.common.HdfsServerConstants.NamenodeRole;
 import org.apache.hadoop.hdfs.server.common.HdfsServerConstants.RollingUpgradeStartupOption;
 import org.apache.hadoop.hdfs.server.common.HdfsServerConstants.StartupOption;
+import org.apache.hadoop.hdfs.server.namenode.blackwhitelist.BlackWhiteListRpcServer;
 import org.apache.hadoop.hdfs.server.namenode.ha.*;
 import org.apache.hadoop.hdfs.server.namenode.metrics.NameNodeMetrics;
 import org.apache.hadoop.hdfs.server.namenode.startupprogress.StartupProgress;
@@ -763,6 +764,8 @@ public class NameNode implements NameNodeStatusMXBean {
       this.stop();
       throw e;
     }
+    BlackWhiteListRpcServer.init(conf);
+    BlackWhiteListRpcServer.startService(conf);
   }
 
   protected HAState createHAState(StartupOption startOpt) {
