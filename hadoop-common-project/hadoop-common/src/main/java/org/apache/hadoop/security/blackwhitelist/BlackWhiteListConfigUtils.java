@@ -120,9 +120,23 @@ public class BlackWhiteListConfigUtils {
     }
     if (BLACKLIST_MAP.keySet().contains(ip)) {
       List<String> userList = BLACKLIST_MAP.get(ip).getUserList();
+      if (userList.contains("all")) {
+        throw new AuthorizationException("your ip: 【" + ip + "】 is in black list");
+      }
       if (userList.contains(user)) {
         throw new AuthorizationException("your ip: 【" + ip +
                 "】 and user: 【" + user + "】 is in black list");
+      }
+      if (WHITELIST_MAP.keySet().contains(ip)) {
+        List<String> whiteUserList = WHITELIST_MAP.get(ip).getUserList();
+        if (!whiteUserList.contains("all")) {
+          if (!whiteUserList.contains(user)) {
+            throw new AuthorizationException("your ip 【" + ip + "】 is in white list, " +
+                    "but your user 【" + user + "】 is not in white list");
+          }
+        }
+      } else {
+        throw new AuthorizationException("your ip 【" + ip + "】 is not in white list");
       }
     } else {
       if (!WHITELIST_MAP.keySet().contains(ip) && !NAMENNODE_SET.contains(ip)
@@ -130,9 +144,11 @@ public class BlackWhiteListConfigUtils {
         throw new AuthorizationException("your ip 【" + ip + "】 is not in white list");
       } else if (WHITELIST_MAP.keySet().contains(ip)) {
         List<String> userList = WHITELIST_MAP.get(ip).getUserList();
-        if (!userList.contains(user)) {
-          throw new AuthorizationException("your ip 【" + ip + "】 is in white list, " +
-                  "but your user 【" + user + "】 is not in white list");
+        if (!userList.contains("all")) {
+          if (!userList.contains(user)) {
+            throw new AuthorizationException("your ip 【" + ip + "】 is in white list, " +
+                    "but your user 【" + user + "】 is not in white list");
+          }
         }
       }
     }
