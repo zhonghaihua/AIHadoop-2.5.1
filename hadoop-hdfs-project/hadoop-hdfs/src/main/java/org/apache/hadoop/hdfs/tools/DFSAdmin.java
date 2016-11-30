@@ -909,29 +909,36 @@ public class DFSAdmin extends FsShell {
       "\t\tDecommissioned nodes are not automatically shutdown and \n" +
       "\t\tare not chosen for writing new replicas.\n";
 
-    String refreshWhiteList_help = "\t\trefresh the white list\n";
+    String refreshWhiteList_help = "-refreshWhiteList: \trefresh the white list\n";
 
-    String printWhiteList_help = "\t\tprint the white list\n";
+    String printWhiteList_help = "-printWhiteList: \tprint the white list\n";
 
-    String refreshBlackList_help = "\t\trefresh the black list\n";
+    String refreshBlackList_help = "-refreshBlackList: \trefresh the black list\n";
 
-    String printBlackList_help = "\t\tprint the black list\n";
+    String printBlackList_help = "-printBlackList: \tprint the black list\n";
 
-    String refreshWhiteListNamenodes_help = "\t\trefresh the namenodes in white list\n";
+    String refreshWhiteListNamenodes_help = "-refreshWhiteListNamenodes:" +
+            " \trefresh the namenodes in white list\n";
 
-    String printWhiteListNamenodes_help = "\t\tprint the namenodes in white list\n";
+    String printWhiteListNamenodes_help = "-printWhiteListNamenodes:" +
+            " \tprint the namenodes in white list\n";
 
-    String refreshWhiteListDatanodes_help = "\t\trefresh the datanodes in white list\n";
+    String refreshWhiteListDatanodes_help = "-refreshWhiteListDatanodes:" +
+            " \trefresh the datanodes in white list\n";
 
-    String printWhiteListDatanodes_help = "\t\tprint the datanodes in white list\n";
+    String printWhiteListDatanodes_help = "-printWhiteListDatanodes:" +
+            " \tprint the datanodes in white list\n";
 
-    String refreshWhiteListOtherCluster_help = "\t\trefresh the other cluster in white list\n";
+    String refreshWhiteListOtherCluster_help = "-refreshWhiteListOtherCluster:" +
+            " \trefresh the other cluster in white list\n";
 
-    String printWhiteListOtherCluster_help = "\t\tprint the other cluster in white list\n";
+    String printWhiteListOtherCluster_help = "-printWhiteListOtherCluster:" +
+            " \tprint the other cluster in white list\n";
 
-    String refreshSecurityDir_help = "\t\trefresh the security in white list\n";
+    String refreshSecurityDir_help = "-refreshSecurityDir:" +
+            " \trefresh the security in white list\n";
 
-    String printSecurityDir_help = "\t\tprint the security in white list\n";
+    String printSecurityDir_help = "-printSecurityDir: \tprint the security in white list\n";
 
     String finalizeUpgrade = "-finalizeUpgrade: Finalize upgrade of HDFS.\n" +
       "\t\tDatanodes delete their previous version working directories,\n" +
