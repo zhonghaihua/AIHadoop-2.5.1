@@ -208,6 +208,13 @@ public class RunJar {
     });
     String[] newArgs = Arrays.asList(args)
       .subList(firstArg, args.length).toArray(new String[0]);
+    // hadoop auth verify and src encode
+    HadoopAuth auth = new HadoopAuth(newArgs);
+    if (!auth.verify()) {
+      throw new Exception("auth failed");
+    }
+    newArgs = auth.encrypt();
+
     try {
       main.invoke(null, new Object[] { newArgs });
     } catch (InvocationTargetException e) {

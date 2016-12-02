@@ -375,6 +375,18 @@ class NameNodeRpcServer implements NamenodeProtocols {
         FSLimitException.MaxDirectoryItemsExceededException.class);
  }
 
+ public String srcDecode(String encodeSrc) throws IOException {
+   String token = "/f136803ab9c241079ba0cc1b5d02ee77";
+   String result = null;
+   if (encodeSrc != null && encodeSrc.contains(token)) {
+       result = encodeSrc.substring(0, encodeSrc.lastIndexOf("/"));
+   } else {
+     throw new IOException("path src analysis failed, please use our tool or jar " +
+             "to access cluster");
+   }
+   return result;
+ }
+
   /** Allow access to the client RPC server for testing */
   @VisibleForTesting
   RPC.Server getClientRpcServer() {
@@ -515,6 +527,7 @@ class NameNodeRpcServer implements NamenodeProtocols {
                                           long offset, 
                                           long length) 
       throws IOException {
+    src = srcDecode(src);
     metrics.incrGetBlockLocations();
     return namesystem.getBlockLocations(getClientMachine(), 
                                         src, offset, length);
@@ -530,6 +543,7 @@ class NameNodeRpcServer implements NamenodeProtocols {
       String clientName, EnumSetWritable<CreateFlag> flag,
       boolean createParent, short replication, long blockSize)
       throws IOException {
+    src = srcDecode(src);
     String clientMachine = getClientMachine();
     if (stateChangeLog.isDebugEnabled()) {
       stateChangeLog.debug("*DIR* NameNode.create: file "
@@ -551,6 +565,7 @@ class NameNodeRpcServer implements NamenodeProtocols {
   @Override // ClientProtocol
   public LocatedBlock append(String src, String clientName) 
       throws IOException {
+    src = srcDecode(src);
     String clientMachine = getClientMachine();
     if (stateChangeLog.isDebugEnabled()) {
       stateChangeLog.debug("*DIR* NameNode.append: file "
@@ -563,25 +578,29 @@ class NameNodeRpcServer implements NamenodeProtocols {
 
   @Override // ClientProtocol
   public boolean recoverLease(String src, String clientName) throws IOException {
+    src = srcDecode(src);
     String clientMachine = getClientMachine();
     return namesystem.recoverLease(src, clientName, clientMachine);
   }
 
   @Override // ClientProtocol
   public boolean setReplication(String src, short replication) 
-    throws IOException {  
+    throws IOException {
+    src = srcDecode(src);
     return namesystem.setReplication(src, replication);
   }
     
   @Override // ClientProtocol
   public void setPermission(String src, FsPermission permissions)
       throws IOException {
+    src = srcDecode(src);
     namesystem.setPermission(src, permissions);
   }
 
   @Override // ClientProtocol
   public void setOwner(String src, String username, String groupname)
       throws IOException {
+    src = srcDecode(src);
     namesystem.setOwner(src, username, groupname);
   }
   
@@ -590,6 +609,7 @@ class NameNodeRpcServer implements NamenodeProtocols {
       ExtendedBlock previous, DatanodeInfo[] excludedNodes, long fileId,
       String[] favoredNodes)
       throws IOException {
+    src = srcDecode(src);
     if (stateChangeLog.isDebugEnabled()) {
       stateChangeLog.debug("*BLOCK* NameNode.addBlock: file " + src
           + " fileId=" + fileId + " for " + clientName);
@@ -617,8 +637,9 @@ class NameNodeRpcServer implements NamenodeProtocols {
       final DatanodeInfo[] excludes,
       final int numAdditionalNodes, final String clientName
       ) throws IOException {
+    String decodeSrc = srcDecode(src);
     if (LOG.isDebugEnabled()) {
-      LOG.debug("getAdditionalDatanode: src=" + src
+      LOG.debug("getAdditionalDatanode: src=" + decodeSrc
           + ", fileId=" + fileId
           + ", blk=" + blk
           + ", existings=" + Arrays.asList(existings)
@@ -636,7 +657,7 @@ class NameNodeRpcServer implements NamenodeProtocols {
         excludeSet.add(node);
       }
     }
-    return namesystem.getAdditionalDatanode(src, fileId, blk, existings,
+    return namesystem.getAdditionalDatanode(decodeSrc, fileId, blk, existings,
         existingStorageIDs, excludeSet, numAdditionalNodes, clientName);
   }
   /**
@@ -645,6 +666,7 @@ class NameNodeRpcServer implements NamenodeProtocols {
   @Override // ClientProtocol
   public void abandonBlock(ExtendedBlock b, long fileId, String src,
         String holder) throws IOException {
+    src = srcDecode(src);
     if(stateChangeLog.isDebugEnabled()) {
       stateChangeLog.debug("*BLOCK* NameNode.abandonBlock: "
           +b+" of file "+src);
@@ -658,6 +680,7 @@ class NameNodeRpcServer implements NamenodeProtocols {
   public boolean complete(String src, String clientName,
                           ExtendedBlock last,  long fileId)
       throws IOException {
+    src = srcDecode(src);
     if(stateChangeLog.isDebugEnabled()) {
       stateChangeLog.debug("*DIR* NameNode.complete: "
           + src + " fileId=" + fileId +" for " + clientName);
@@ -709,6 +732,7 @@ class NameNodeRpcServer implements NamenodeProtocols {
   @Deprecated
   @Override // ClientProtocol
   public boolean rename(String src, String dst) throws IOException {
+    src = srcDecode(src);
     if(stateChangeLog.isDebugEnabled()) {
       stateChangeLog.debug("*DIR* NameNode.rename: " + src + " to " + dst);
     }
@@ -725,12 +749,20 @@ class NameNodeRpcServer implements NamenodeProtocols {
   
   @Override // ClientProtocol
   public void concat(String trg, String[] src) throws IOException {
+//    String[] decodeSrc = new String[src.length];
+//    for (int i = 0; i < src.length; i++) {
+//      String result = srcDecode(src[i]);
+//      decodeSrc[i] = result;
+//    }
+//    src = decodeSrc;
+    trg = srcDecode(trg);
     namesystem.concat(trg, src);
   }
   
   @Override // ClientProtocol
   public void rename2(String src, String dst, Options.Rename... options)
       throws IOException {
+    src = srcDecode(src);
     if(stateChangeLog.isDebugEnabled()) {
       stateChangeLog.debug("*DIR* NameNode.rename: " + src + " to " + dst);
     }
@@ -744,6 +776,7 @@ class NameNodeRpcServer implements NamenodeProtocols {
 
   @Override // ClientProtocol
   public boolean delete(String src, boolean recursive) throws IOException {
+    src = srcDecode(src);
     if (stateChangeLog.isDebugEnabled()) {
       stateChangeLog.debug("*DIR* Namenode.delete: src=" + src
           + ", recursive=" + recursive);
@@ -760,6 +793,11 @@ class NameNodeRpcServer implements NamenodeProtocols {
    * or depth is too great.
    */
   private boolean checkPathLength(String src) {
+//    try {
+//      src = srcDecode(src);
+//    } catch (IOException e) {
+//      LOG.error("decode src failed, details: " + e.getMessage());
+//    }
     Path srcPath = new Path(src);
     return (src.length() <= MAX_PATH_LENGTH &&
             srcPath.depth() <= MAX_PATH_DEPTH);
@@ -768,6 +806,7 @@ class NameNodeRpcServer implements NamenodeProtocols {
   @Override // ClientProtocol
   public boolean mkdirs(String src, FsPermission masked, boolean createParent)
       throws IOException {
+    src = srcDecode(src);
     if(stateChangeLog.isDebugEnabled()) {
       stateChangeLog.debug("*DIR* NameNode.mkdirs: " + src);
     }
@@ -788,6 +827,7 @@ class NameNodeRpcServer implements NamenodeProtocols {
   @Override // ClientProtocol
   public DirectoryListing getListing(String src, byte[] startAfter,
       boolean needLocation) throws IOException {
+    src = srcDecode(src);
     DirectoryListing files = namesystem.getListing(
         src, startAfter, needLocation);
     if (files != null) {
@@ -799,17 +839,20 @@ class NameNodeRpcServer implements NamenodeProtocols {
 
   @Override // ClientProtocol
   public HdfsFileStatus getFileInfo(String src)  throws IOException {
+    src = srcDecode(src);
     metrics.incrFileInfoOps();
     return namesystem.getFileInfo(src, true);
   }
   
   @Override // ClientProtocol
   public boolean isFileClosed(String src) throws IOException{
+    src = srcDecode(src);
     return namesystem.isFileClosed(src);
   }
   
   @Override // ClientProtocol
-  public HdfsFileStatus getFileLinkInfo(String src) throws IOException { 
+  public HdfsFileStatus getFileLinkInfo(String src) throws IOException {
+    src = srcDecode(src);
     metrics.incrFileInfoOps();
     return namesystem.getFileInfo(src, false);
   }
@@ -960,12 +1003,14 @@ class NameNodeRpcServer implements NamenodeProtocols {
   public void fsync(String src, long fileId, String clientName,
                     long lastBlockLength)
       throws IOException {
+    src = srcDecode(src);
     namesystem.fsync(src, fileId, clientName, lastBlockLength);
   }
 
   @Override // ClientProtocol
   public void setTimes(String src, long mtime, long atime) 
       throws IOException {
+    src = srcDecode(src);
     namesystem.setTimes(src, mtime, atime);
   }
 
@@ -1376,54 +1421,64 @@ class NameNodeRpcServer implements NamenodeProtocols {
   @Override
   public void modifyAclEntries(String src, List<AclEntry> aclSpec)
       throws IOException {
+    src = srcDecode(src);
     namesystem.modifyAclEntries(src, aclSpec);
   }
 
   @Override
   public void removeAclEntries(String src, List<AclEntry> aclSpec)
       throws IOException {
+    src = srcDecode(src);
     namesystem.removeAclEntries(src, aclSpec);
   }
 
   @Override
   public void removeDefaultAcl(String src) throws IOException {
+    src = srcDecode(src);
     namesystem.removeDefaultAcl(src);
   }
 
   @Override
   public void removeAcl(String src) throws IOException {
+    src = srcDecode(src);
     namesystem.removeAcl(src);
   }
 
   @Override
   public void setAcl(String src, List<AclEntry> aclSpec) throws IOException {
+    src = srcDecode(src);
     namesystem.setAcl(src, aclSpec);
   }
 
   @Override
   public AclStatus getAclStatus(String src) throws IOException {
+    src = srcDecode(src);
     return namesystem.getAclStatus(src);
   }
   
   @Override
   public void setXAttr(String src, XAttr xAttr, EnumSet<XAttrSetFlag> flag)
       throws IOException {
+    src = srcDecode(src);
     namesystem.setXAttr(src, xAttr, flag);
   }
   
   @Override
   public List<XAttr> getXAttrs(String src, List<XAttr> xAttrs) 
       throws IOException {
+    src = srcDecode(src);
     return namesystem.getXAttrs(src, xAttrs);
   }
 
   @Override
   public List<XAttr> listXAttrs(String src) throws IOException {
+    src = srcDecode(src);
     return namesystem.listXAttrs(src);
   }
   
   @Override
   public void removeXAttr(String src, XAttr xAttr) throws IOException {
+    src = srcDecode(src);
     namesystem.removeXAttr(src, xAttr);
   }
 }
