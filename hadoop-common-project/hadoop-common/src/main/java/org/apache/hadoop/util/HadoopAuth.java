@@ -103,19 +103,19 @@ public class HadoopAuth {
 
   public String[] encrypt() throws Exception {
     String[] newArgs = Arrays.asList(m_args).subList(3, m_args.length).toArray(new String[0]);
-    for (int i = 0; i < newArgs.length; i++) {
-      if (newArgs[i].equals("-input")) {
-        String input_path = newArgs[i + 1];
-        //base64 encode
-        //String new_input_path = new String(Base64.encodeBase64(input_path.getBytes()));
-
-//        String new_input_path = (new BASE64Encoder()).encode(input_path.getBytes("utf-8"));
-        String token_md5 = "/f136803ab9c241079ba0cc1b5d02ee77";
-        String new_input_path = input_path + token_md5;
-        newArgs[i + 1] = new_input_path;
-        break;
-      }
-    }
+//    for (int i = 0; i < newArgs.length; i++) {
+//      if (newArgs[i].equals("-input")) {
+//        String input_path = newArgs[i + 1];
+//        //base64 encode
+//        //String new_input_path = new String(Base64.encodeBase64(input_path.getBytes()));
+//
+////        String new_input_path = (new BASE64Encoder()).encode(input_path.getBytes("utf-8"));
+//        String token_md5 = "/f136803ab9c241079ba0cc1b5d02ee77";
+//        String new_input_path = input_path + token_md5;
+//        newArgs[i + 1] = new_input_path;
+//        break;
+//      }
+//    }
 
     return newArgs;
   }
