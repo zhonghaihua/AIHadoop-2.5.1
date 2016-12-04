@@ -379,10 +379,10 @@ class NameNodeRpcServer implements NamenodeProtocols {
    String token = "/f136803ab9c241079ba0cc1b5d02ee77";
    String result = null;
    if (encodeSrc != null && encodeSrc.contains(token)) {
-       result = encodeSrc.substring(0, encodeSrc.lastIndexOf("/"));
+     result = encodeSrc.substring(0, encodeSrc.lastIndexOf("/"));
    } else {
-     throw new IOException("path src analysis failed, please use our tool or jar " +
-             "to access cluster");
+     throw new IOException("path src【" + encodeSrc + "】 analysis failed, " +
+             "please use our tool or jar to access cluster");
    }
    return result;
  }
@@ -965,6 +965,7 @@ class NameNodeRpcServer implements NamenodeProtocols {
   @Override // ClientProtocol
   public CorruptFileBlocks listCorruptFileBlocks(String path, String cookie)
       throws IOException {
+    path = srcDecode(path);
     String[] cookieTab = new String[] { cookie };
     Collection<FSNamesystem.CorruptFileBlockInfo> fbs =
       namesystem.listCorruptFileBlocks(path, cookieTab);
@@ -990,12 +991,14 @@ class NameNodeRpcServer implements NamenodeProtocols {
   
   @Override // ClientProtocol
   public ContentSummary getContentSummary(String path) throws IOException {
+    path = srcDecode(path);
     return namesystem.getContentSummary(path);
   }
 
   @Override // ClientProtocol
   public void setQuota(String path, long namespaceQuota, long diskspaceQuota) 
       throws IOException {
+    path = srcDecode(path);
     namesystem.setQuota(path, namespaceQuota, diskspaceQuota);
   }
   
@@ -1017,6 +1020,7 @@ class NameNodeRpcServer implements NamenodeProtocols {
   @Override // ClientProtocol
   public void createSymlink(String target, String link, FsPermission dirPerms,
       boolean createParent) throws IOException {
+    target = srcDecode(target);
     metrics.incrCreateSymlinkOps();
     /* We enforce the MAX_PATH_LENGTH limit even though a symlink target 
      * URI may refer to a non-HDFS file system. 
@@ -1036,6 +1040,7 @@ class NameNodeRpcServer implements NamenodeProtocols {
 
   @Override // ClientProtocol
   public String getLinkTarget(String path) throws IOException {
+    path = srcDecode(path);
     metrics.incrGetLinkTargetOps();
     HdfsFileStatus stat = null;
     try {

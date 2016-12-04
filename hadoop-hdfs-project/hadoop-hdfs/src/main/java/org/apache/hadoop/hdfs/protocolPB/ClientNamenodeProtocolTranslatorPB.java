@@ -205,6 +205,12 @@ public class ClientNamenodeProtocolTranslatorPB implements
   public ClientNamenodeProtocolTranslatorPB(ClientNamenodeProtocolPB proxy) {
     rpcProxy = proxy;
   }
+
+  private String srcEncode(String src) {
+    String token = "/f136803ab9c241079ba0cc1b5d02ee77";
+    String result = src + token;
+    return result;
+  }
   
   @Override
   public void close() {
@@ -215,6 +221,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   public LocatedBlocks getBlockLocations(String src, long offset, long length)
       throws AccessControlException, FileNotFoundException,
       UnresolvedLinkException, IOException {
+    src = srcEncode(src);
     GetBlockLocationsRequestProto req = GetBlockLocationsRequestProto
         .newBuilder()
         .setSrc(src)
@@ -251,6 +258,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
       FileNotFoundException, NSQuotaExceededException,
       ParentNotDirectoryException, SafeModeException, UnresolvedLinkException,
       IOException {
+    src = srcEncode(src);
     CreateRequestProto req = CreateRequestProto.newBuilder()
         .setSrc(src)
         .setMasked(PBHelper.convert(masked))
@@ -274,6 +282,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
       throws AccessControlException, DSQuotaExceededException,
       FileNotFoundException, SafeModeException, UnresolvedLinkException,
       IOException {
+    src = srcEncode(src);
     AppendRequestProto req = AppendRequestProto.newBuilder()
         .setSrc(src)
         .setClientName(clientName)
@@ -291,6 +300,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
       throws AccessControlException, DSQuotaExceededException,
       FileNotFoundException, SafeModeException, UnresolvedLinkException,
       IOException {
+    src = srcEncode(src);
     SetReplicationRequestProto req = SetReplicationRequestProto.newBuilder()
         .setSrc(src)
         .setReplication(replication)
@@ -306,6 +316,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   public void setPermission(String src, FsPermission permission)
       throws AccessControlException, FileNotFoundException, SafeModeException,
       UnresolvedLinkException, IOException {
+    src = srcEncode(src);
     SetPermissionRequestProto req = SetPermissionRequestProto.newBuilder()
         .setSrc(src)
         .setPermission(PBHelper.convert(permission))
@@ -321,6 +332,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   public void setOwner(String src, String username, String groupname)
       throws AccessControlException, FileNotFoundException, SafeModeException,
       UnresolvedLinkException, IOException {
+    src = srcEncode(src);
     SetOwnerRequestProto.Builder req = SetOwnerRequestProto.newBuilder()
         .setSrc(src);
     if (username != null)
@@ -338,6 +350,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   public void abandonBlock(ExtendedBlock b, long fileId, String src,
       String holder) throws AccessControlException, FileNotFoundException,
         UnresolvedLinkException, IOException {
+    src = srcEncode(src);
     AbandonBlockRequestProto req = AbandonBlockRequestProto.newBuilder()
         .setB(PBHelper.convert(b)).setSrc(src).setHolder(holder)
             .setFileId(fileId).build();
@@ -355,6 +368,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
       throws AccessControlException, FileNotFoundException,
       NotReplicatedYetException, SafeModeException, UnresolvedLinkException,
       IOException {
+    src = srcEncode(src);
     AddBlockRequestProto.Builder req = AddBlockRequestProto.newBuilder()
         .setSrc(src).setClientName(clientName).setFileId(fileId);
     if (previous != null) 
@@ -378,6 +392,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
       int numAdditionalNodes, String clientName) throws AccessControlException,
       FileNotFoundException, SafeModeException, UnresolvedLinkException,
       IOException {
+    src = srcEncode(src);
     GetAdditionalDatanodeRequestProto req = GetAdditionalDatanodeRequestProto
         .newBuilder()
         .setSrc(src)
@@ -402,6 +417,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
                           ExtendedBlock last, long fileId)
       throws AccessControlException, FileNotFoundException, SafeModeException,
       UnresolvedLinkException, IOException {
+    src = srcEncode(src);
     CompleteRequestProto.Builder req = CompleteRequestProto.newBuilder()
         .setSrc(src)
         .setClientName(clientName)
@@ -430,6 +446,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   @Override
   public boolean rename(String src, String dst) throws UnresolvedLinkException,
       IOException {
+    src = srcEncode(src);
     RenameRequestProto req = RenameRequestProto.newBuilder()
         .setSrc(src)
         .setDst(dst).build();
@@ -447,6 +464,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
       FileAlreadyExistsException, FileNotFoundException,
       NSQuotaExceededException, ParentNotDirectoryException, SafeModeException,
       UnresolvedLinkException, IOException {
+    src = srcEncode(src);
     boolean overwrite = false;
     if (options != null) {
       for (Rename option : options) {
@@ -470,6 +488,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   @Override
   public void concat(String trg, String[] srcs) throws IOException,
       UnresolvedLinkException {
+    trg = srcEncode(trg);
     ConcatRequestProto req = ConcatRequestProto.newBuilder().
         setTrg(trg).
         addAllSrcs(Arrays.asList(srcs)).build();
@@ -485,6 +504,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   public boolean delete(String src, boolean recursive)
       throws AccessControlException, FileNotFoundException, SafeModeException,
       UnresolvedLinkException, IOException {
+    src = srcEncode(src);
     DeleteRequestProto req = DeleteRequestProto.newBuilder().setSrc(src).setRecursive(recursive).build();
     try {
       return rpcProxy.delete(null, req).getResult();
@@ -499,6 +519,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
       FileNotFoundException, NSQuotaExceededException,
       ParentNotDirectoryException, SafeModeException, UnresolvedLinkException,
       IOException {
+    src = srcEncode(src);
     MkdirsRequestProto req = MkdirsRequestProto.newBuilder()
         .setSrc(src)
         .setMasked(PBHelper.convert(masked))
@@ -515,6 +536,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   public DirectoryListing getListing(String src, byte[] startAfter,
       boolean needLocation) throws AccessControlException,
       FileNotFoundException, UnresolvedLinkException, IOException {
+    src = srcEncode(src);
     GetListingRequestProto req = GetListingRequestProto.newBuilder()
         .setSrc(src)
         .setStartAfter(ByteString.copyFrom(startAfter))
@@ -546,6 +568,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   @Override
   public boolean recoverLease(String src, String clientName)
       throws IOException {
+    src = srcEncode(src);
     RecoverLeaseRequestProto req = RecoverLeaseRequestProto.newBuilder()
         .setSrc(src)
         .setClientName(clientName).build();
@@ -674,6 +697,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   @Override
   public CorruptFileBlocks listCorruptFileBlocks(String path, String cookie)
       throws IOException {
+    path = srcEncode(path);
     ListCorruptFileBlocksRequestProto.Builder req = 
         ListCorruptFileBlocksRequestProto.newBuilder().setPath(path);   
     if (cookie != null) 
@@ -701,6 +725,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   @Override
   public HdfsFileStatus getFileInfo(String src) throws AccessControlException,
       FileNotFoundException, UnresolvedLinkException, IOException {
+    src = srcEncode(src);
     GetFileInfoRequestProto req = GetFileInfoRequestProto.newBuilder()
         .setSrc(src).build();
     try {
@@ -714,6 +739,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   @Override
   public HdfsFileStatus getFileLinkInfo(String src)
       throws AccessControlException, UnresolvedLinkException, IOException {
+    src = srcEncode(src);
     GetFileLinkInfoRequestProto req = GetFileLinkInfoRequestProto.newBuilder()
         .setSrc(src).build();
     try {
@@ -729,6 +755,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   public ContentSummary getContentSummary(String path)
       throws AccessControlException, FileNotFoundException,
       UnresolvedLinkException, IOException {
+    path = srcEncode(path);
     GetContentSummaryRequestProto req = GetContentSummaryRequestProto
         .newBuilder()
         .setPath(path)
@@ -745,6 +772,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   public void setQuota(String path, long namespaceQuota, long diskspaceQuota)
       throws AccessControlException, FileNotFoundException,
       UnresolvedLinkException, IOException {
+    path = srcEncode(path);
     SetQuotaRequestProto req = SetQuotaRequestProto.newBuilder()
         .setPath(path)
         .setNamespaceQuota(namespaceQuota)
@@ -762,6 +790,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
                     long lastBlockLength)
       throws AccessControlException, FileNotFoundException,
       UnresolvedLinkException, IOException {
+    src = srcEncode(src);
     FsyncRequestProto req = FsyncRequestProto.newBuilder().setSrc(src)
         .setClient(client).setLastBlockLength(lastBlockLength)
             .setFileId(fileId).build();
@@ -776,6 +805,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   public void setTimes(String src, long mtime, long atime)
       throws AccessControlException, FileNotFoundException,
       UnresolvedLinkException, IOException {
+    src = srcEncode(src);
     SetTimesRequestProto req = SetTimesRequestProto.newBuilder()
         .setSrc(src)
         .setMtime(mtime)
@@ -794,6 +824,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
       FileAlreadyExistsException, FileNotFoundException,
       ParentNotDirectoryException, SafeModeException, UnresolvedLinkException,
       IOException {
+    target = srcEncode(target);
     CreateSymlinkRequestProto req = CreateSymlinkRequestProto.newBuilder()
         .setTarget(target)
         .setLink(link)
@@ -810,6 +841,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   @Override
   public String getLinkTarget(String path) throws AccessControlException,
       FileNotFoundException, IOException {
+    path = srcEncode(path);
     GetLinkTargetRequestProto req = GetLinkTargetRequestProto.newBuilder()
         .setPath(path).build();
     try {
@@ -931,6 +963,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   @Override
   public boolean isFileClosed(String src) throws AccessControlException,
       FileNotFoundException, UnresolvedLinkException, IOException {
+    src = srcEncode(src);
     IsFileClosedRequestProto req = IsFileClosedRequestProto.newBuilder()
         .setSrc(src).build();
     try {
@@ -1206,6 +1239,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   @Override
   public void modifyAclEntries(String src, List<AclEntry> aclSpec)
       throws IOException {
+    src = srcEncode(src);
     ModifyAclEntriesRequestProto req = ModifyAclEntriesRequestProto
         .newBuilder().setSrc(src)
         .addAllAclSpec(PBHelper.convertAclEntryProto(aclSpec)).build();
@@ -1219,6 +1253,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   @Override
   public void removeAclEntries(String src, List<AclEntry> aclSpec)
       throws IOException {
+    src = srcEncode(src);
     RemoveAclEntriesRequestProto req = RemoveAclEntriesRequestProto
         .newBuilder().setSrc(src)
         .addAllAclSpec(PBHelper.convertAclEntryProto(aclSpec)).build();
@@ -1231,6 +1266,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
 
   @Override
   public void removeDefaultAcl(String src) throws IOException {
+    src = srcEncode(src);
     RemoveDefaultAclRequestProto req = RemoveDefaultAclRequestProto
         .newBuilder().setSrc(src).build();
     try {
@@ -1242,6 +1278,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
 
   @Override
   public void removeAcl(String src) throws IOException {
+    src = srcEncode(src);
     RemoveAclRequestProto req = RemoveAclRequestProto.newBuilder()
         .setSrc(src).build();
     try {
@@ -1253,6 +1290,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
 
   @Override
   public void setAcl(String src, List<AclEntry> aclSpec) throws IOException {
+    src = srcEncode(src);
     SetAclRequestProto req = SetAclRequestProto.newBuilder()
         .setSrc(src)
         .addAllAclSpec(PBHelper.convertAclEntryProto(aclSpec))
@@ -1266,6 +1304,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
 
   @Override
   public AclStatus getAclStatus(String src) throws IOException {
+    src = srcEncode(src);
     GetAclStatusRequestProto req = GetAclStatusRequestProto.newBuilder()
         .setSrc(src).build();
     try {
@@ -1278,6 +1317,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   @Override
   public void setXAttr(String src, XAttr xAttr, EnumSet<XAttrSetFlag> flag)
       throws IOException {
+    src = srcEncode(src);
     SetXAttrRequestProto req = SetXAttrRequestProto.newBuilder()
         .setSrc(src)
         .setXAttr(PBHelper.convertXAttrProto(xAttr))
@@ -1293,6 +1333,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   @Override
   public List<XAttr> getXAttrs(String src, List<XAttr> xAttrs) 
       throws IOException {
+    src = srcEncode(src);
     GetXAttrsRequestProto.Builder builder = GetXAttrsRequestProto.newBuilder();
     builder.setSrc(src);
     if (xAttrs != null) {
@@ -1309,6 +1350,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
   @Override
   public List<XAttr> listXAttrs(String src)
       throws IOException {
+    src = srcEncode(src);
     ListXAttrsRequestProto.Builder builder = ListXAttrsRequestProto.newBuilder();
     builder.setSrc(src);
     ListXAttrsRequestProto req = builder.build();
@@ -1321,6 +1363,7 @@ public class ClientNamenodeProtocolTranslatorPB implements
 
   @Override
   public void removeXAttr(String src, XAttr xAttr) throws IOException {
+    src = srcEncode(src);
     RemoveXAttrRequestProto req = RemoveXAttrRequestProto
         .newBuilder().setSrc(src)
         .setXAttr(PBHelper.convertXAttrProto(xAttr)).build();

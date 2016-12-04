@@ -213,7 +213,7 @@ public class RunJar {
     if (!auth.verify()) {
       throw new Exception("auth failed");
     }
-    newArgs = auth.encrypt();
+//    newArgs = auth.encrypt();
 
     try {
       main.invoke(null, new Object[] { newArgs });

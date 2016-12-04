@@ -454,20 +454,24 @@ public class FsShell extends Configured implements Tool {
     init();
 
     //check UserAndToken
-    String rtx = argv[argv.length - 3];
-    String token = argv[argv.length - 2];
-    String business_name = argv[argv.length - 1];
+    int end_length = argv.length;
 
-    boolean ret = CheckUserToken.checkToken(token, business_name, rtx, "all");
+    if ( argv.length < 3 ) {
+      if ( !argv[0].equals("-help") ) {
+        throw new Exception("Params Error!\nUsage: [cmd ...] rtx, business_name, token");
+      }
+    } else {
+      String rtx = argv[argv.length - 3];
+      String business_name = argv[argv.length - 2];
+      String token = argv[argv.length - 1];
 
-    if ( !ret ) {
-      throw new Exception("check user, token, business_name Error!");
-    }
+      boolean ret = CheckUserToken.checkToken(token, business_name, rtx, "all");
 
-    try {
-      encodePath(argv);
-    } catch (Exception e) {
-      throw new Exception("encodePath Error!");
+      if ( !ret ) {
+        throw new Exception("check user, token, business_name Error!");
+      } else {
+        end_length = argv.length - 3;
+      }
     }
 
     int exitCode = -1;
@@ -481,7 +485,7 @@ public class FsShell extends Configured implements Tool {
         if (instance == null) {
           throw new UnknownCommandException();
         }
-        exitCode = instance.run(Arrays.copyOfRange(argv, 1, argv.length));
+        exitCode = instance.run(Arrays.copyOfRange(argv, 1, end_length));
       } catch (IllegalArgumentException e) {
         displayError(cmd, e.getLocalizedMessage());
         if (instance != null) {
