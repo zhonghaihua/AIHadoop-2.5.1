@@ -126,7 +126,7 @@ public class DistCp extends Configured implements Tool {
     }
     
     try {
-      inputOptions = (OptionsParser.parse(argv));
+      inputOptions = (OptionsParser.parse(newArgv));
       setTargetPathExists();
       LOG.info("Input Options: " + inputOptions);
       if (copyIn) {
