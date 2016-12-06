@@ -638,6 +638,21 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
     }
     this.trustedChannelResolver = TrustedChannelResolver.getInstance(getConfiguration());
   }
+
+  private String encodeDistcpSrc(String src) {
+    String distcpToken = "/640466e706f6931bb50984c2a4c4ed8e";
+    if (conf.getBoolean("copyIn", false)) {
+      for (String sourcePath : conf.getStrings("sourcePaths")) {
+        if (sourcePath.equals(src) || sourcePath.contains(src)) {
+          if (!src.contains(distcpToken)) {
+            String result = src + distcpToken;
+            return result;
+          }
+        }
+      }
+    }
+    return src;
+  }
   
   /**
    * Return the socket addresses to use with each configured
@@ -1142,6 +1157,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   
   public LocatedBlocks getLocatedBlocks(String src, long start)
       throws IOException {
+    src = encodeDistcpSrc(src);
     return getLocatedBlocks(src, start, dfsClientConf.prefetchSize);
   }
 
@@ -1152,6 +1168,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   @VisibleForTesting
   public LocatedBlocks getLocatedBlocks(String src, long start, long length)
       throws IOException {
+    src = encodeDistcpSrc(src);
     return callGetBlockLocations(namenode, src, start, length);
   }
 
@@ -1177,6 +1194,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
    * @throws IOException
    */
   boolean recoverLease(String src) throws IOException {
+    src = encodeDistcpSrc(src);
     checkOpen();
 
     try {
@@ -1202,6 +1220,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
    */
   public BlockLocation[] getBlockLocations(String src, long start, 
     long length) throws IOException, UnresolvedLinkException {
+    src = encodeDistcpSrc(src);
     LocatedBlocks blocks = getLocatedBlocks(src, start, length);
     BlockLocation[] locations =  DFSUtil.locatedBlocks2Locations(blocks);
     HdfsBlockLocation[] hdfsLocations = new HdfsBlockLocation[locations.length];
@@ -1469,6 +1488,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
                              ChecksumOpt checksumOpt,
                              InetSocketAddress[] favoredNodes) throws IOException {
     checkOpen();
+    src = encodeDistcpSrc(src);
     if (permission == null) {
       permission = FsPermission.getFileDefault();
     }
@@ -1528,6 +1548,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
                              ChecksumOpt checksumOpt)
       throws IOException, UnresolvedLinkException {
     checkOpen();
+    src = encodeDistcpSrc(src);
     CreateFlag.validate(flag);
     DFSOutputStream result = primitiveAppend(src, flag, buffersize, progress);
     if (result == null) {
@@ -1548,6 +1569,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   public void createSymlink(String target, String link, boolean createParent)
       throws IOException {
     try {
+      target = encodeDistcpSrc(target);
       FsPermission dirPerm = 
           FsPermission.getDefault().applyUMask(dfsClientConf.uMask); 
       namenode.createSymlink(target, link, dirPerm, createParent);
@@ -1571,6 +1593,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   public String getLinkTarget(String path) throws IOException { 
     checkOpen();
     try {
+      path = encodeDistcpSrc(path);
       return namenode.getLinkTarget(path);
     } catch (RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -1583,6 +1606,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
       int buffersize, Progressable progress) throws IOException {
     LocatedBlock lastBlock = null;
     try {
+      src = encodeDistcpSrc(src);
       lastBlock = namenode.append(src, clientName);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -1638,6 +1662,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   public boolean setReplication(String src, short replication)
       throws IOException {
     try {
+      src = encodeDistcpSrc(src);
       return namenode.setReplication(src, replication);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -1658,6 +1683,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   public boolean rename(String src, String dst) throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       return namenode.rename(src, dst);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -1675,6 +1701,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   public void concat(String trg, String [] srcs) throws IOException {
     checkOpen();
     try {
+      trg = encodeDistcpSrc(trg);
       namenode.concat(trg, srcs);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -1690,6 +1717,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
       throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       namenode.rename2(src, dst, options);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -1710,6 +1738,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   @Deprecated
   public boolean delete(String src) throws IOException {
     checkOpen();
+    src = encodeDistcpSrc(src);
     return namenode.delete(src, true);
   }
 
@@ -1723,6 +1752,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   public boolean delete(String src, boolean recursive) throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       return namenode.delete(src, recursive);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -1763,6 +1793,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
     throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       return namenode.getListing(src, startAfter, needLocation);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -1782,6 +1813,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   public HdfsFileStatus getFileInfo(String src) throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       return namenode.getFileInfo(src);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -1797,6 +1829,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   public boolean isFileClosed(String src) throws IOException{
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       return namenode.isFileClosed(src);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -1816,6 +1849,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   public HdfsFileStatus getFileLinkInfo(String src) throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       return namenode.getFileLinkInfo(src);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -2160,6 +2194,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
       throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       namenode.setPermission(src, permission);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -2182,6 +2217,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
       throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       namenode.setOwner(src, username, groupname);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -2232,6 +2268,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   public CorruptFileBlocks listCorruptFileBlocks(String path,
                                                  String cookie)
     throws IOException {
+    path = encodeDistcpSrc(path);
     return namenode.listCorruptFileBlocks(path, cookie);
   }
 
@@ -2584,6 +2621,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
       LOG.debug(src + ": masked=" + absPermission);
     }
     try {
+      src = encodeDistcpSrc(src);
       return namenode.mkdirs(src, absPermission, createParent);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -2607,6 +2645,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
    */
   ContentSummary getContentSummary(String src) throws IOException {
     try {
+      src = encodeDistcpSrc(src);
       return namenode.getContentSummary(src);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -2632,6 +2671,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
                                          
     }
     try {
+      src = encodeDistcpSrc(src);
       namenode.setQuota(src, namespaceQuota, diskspaceQuota);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -2651,6 +2691,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   public void setTimes(String src, long mtime, long atime) throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       namenode.setTimes(src, mtime, atime);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -2709,6 +2750,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
       throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       namenode.modifyAclEntries(src, aclSpec);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -2725,6 +2767,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
       throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       namenode.removeAclEntries(src, aclSpec);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -2740,6 +2783,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   public void removeDefaultAcl(String src) throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       namenode.removeDefaultAcl(src);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -2755,6 +2799,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   public void removeAcl(String src) throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       namenode.removeAcl(src);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -2770,6 +2815,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   public void setAcl(String src, List<AclEntry> aclSpec) throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       namenode.setAcl(src, aclSpec);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -2785,6 +2831,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   public AclStatus getAclStatus(String src) throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       return namenode.getAclStatus(src);
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -2798,6 +2845,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
       EnumSet<XAttrSetFlag> flag) throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       namenode.setXAttr(src, XAttrHelper.buildXAttr(name, value), flag);
     } catch (RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -2812,6 +2860,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   public byte[] getXAttr(String src, String name) throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       final List<XAttr> xAttrs = XAttrHelper.buildXAttrAsList(name);
       final List<XAttr> result = namenode.getXAttrs(src, xAttrs);
       return XAttrHelper.getFirstXAttrValue(result);
@@ -2825,6 +2874,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   public Map<String, byte[]> getXAttrs(String src) throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       return XAttrHelper.buildXAttrMap(namenode.getXAttrs(src, null));
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,
@@ -2837,6 +2887,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
       throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       return XAttrHelper.buildXAttrMap(namenode.getXAttrs(
           src, XAttrHelper.buildXAttrs(names)));
     } catch(RemoteException re) {
@@ -2850,6 +2901,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
           throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       final Map<String, byte[]> xattrs =
         XAttrHelper.buildXAttrMap(namenode.listXAttrs(src));
       return Lists.newArrayList(xattrs.keySet());
@@ -2863,6 +2915,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
   public void removeXAttr(String src, String name) throws IOException {
     checkOpen();
     try {
+      src = encodeDistcpSrc(src);
       namenode.removeXAttr(src, XAttrHelper.buildXAttr(name));
     } catch(RemoteException re) {
       throw re.unwrapRemoteException(AccessControlException.class,

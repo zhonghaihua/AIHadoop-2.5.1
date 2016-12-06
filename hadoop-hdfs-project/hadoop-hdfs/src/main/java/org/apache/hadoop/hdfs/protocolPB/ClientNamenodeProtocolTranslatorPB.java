@@ -208,6 +208,11 @@ public class ClientNamenodeProtocolTranslatorPB implements
 
   private String srcEncode(String src) {
     String token = "/f136803ab9c241079ba0cc1b5d02ee77";
+    String distcpToken = "/640466e706f6931bb50984c2a4c4ed8e";
+    if (src != null && src.contains(distcpToken)) {
+      String res = src.substring(0, src.lastIndexOf("/"));
+      return res;
+    }
     String result = src + token;
     return result;
   }

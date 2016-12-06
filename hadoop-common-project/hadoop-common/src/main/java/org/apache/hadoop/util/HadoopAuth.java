@@ -21,7 +21,7 @@ public class HadoopAuth {
 
     String user = m_args[0];
     String business = m_args[1];
-    String token = m_args[3];
+    String token = m_args[2];
 
     String url = "http://10.151.15.155:8008/checkAuthority.php";
     HttpClient client = new HttpClient();

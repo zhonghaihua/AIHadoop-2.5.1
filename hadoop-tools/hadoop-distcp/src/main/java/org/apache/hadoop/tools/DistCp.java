@@ -38,6 +38,7 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Random;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -61,6 +62,7 @@ public class DistCp extends Configured implements Tool {
   private static final Log LOG = LogFactory.getLog(DistCp.class);
 
   private DistCpOptions inputOptions;
+  private boolean copyIn = false;
   private Path metaFolder;
 
   private static final String PREFIX = "_distcp";
@@ -105,11 +107,36 @@ public class DistCp extends Configured implements Tool {
       OptionsParser.usage();
       return DistCpConstants.INVALID_ARGUMENT;
     }
+
+    boolean hasFlag = false;
+    for (String arg : argv) {
+      if (arg.toLowerCase().contains("copyin") || arg.toLowerCase().contains("copyout")) {
+        hasFlag = true;
+        if (arg.toLowerCase().contains("copyin")) {
+          copyIn = true;
+        }
+        break;
+      }
+    }
+    if (!hasFlag) {
+      OptionsParser.usage();
+      return DistCpConstants.INVALID_ARGUMENT;
+    }
     
     try {
       inputOptions = (OptionsParser.parse(argv));
       setTargetPathExists();
       LOG.info("Input Options: " + inputOptions);
+      if (copyIn) {
+        String[] sourcePaths = new String[inputOptions.getSourcePaths().size()];
+        List<Path> originalSourcePaths = inputOptions.getSourcePaths();
+        for (int i = 0; i < originalSourcePaths.size(); i++) {
+          String originalPath = originalSourcePaths.get(i).toUri().getPath();
+          sourcePaths[i] = originalPath;
+        }
+        getConf().setBoolean("copyIn", copyIn);
+        getConf().setStrings("sourcePaths", sourcePaths);
+      }
     } catch (Throwable e) {
       LOG.error("Invalid arguments: ", e);
       System.err.println("Invalid arguments: " + e.getMessage());
