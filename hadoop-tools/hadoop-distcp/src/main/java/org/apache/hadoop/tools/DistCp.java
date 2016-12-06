@@ -109,8 +109,8 @@ public class DistCp extends Configured implements Tool {
     }
 
     boolean hasFlag = false;
-    String[] newArgv = new String[argv.length];
-    for (int i = 0; i < argv.length; i++) {
+    String[] newArgv = new String[argv.length - 1];
+    for (int i = 0, j = 0; i < argv.length; i++) {
       if (argv[i].toLowerCase().contains("copyin") || argv[i].toLowerCase().contains("copyout")) {
         hasFlag = true;
         if (argv[i].toLowerCase().contains("copyin")) {
@@ -118,9 +118,8 @@ public class DistCp extends Configured implements Tool {
         }
         continue;
       }
-      newArgv[i] = argv[i];
+      newArgv[j++] = argv[i];
     }
-    argv = newArgv;
     if (!hasFlag) {
       OptionsParser.usage();
       return DistCpConstants.INVALID_ARGUMENT;
