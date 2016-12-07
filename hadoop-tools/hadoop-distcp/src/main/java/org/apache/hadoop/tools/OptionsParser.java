@@ -249,6 +249,6 @@ public class OptionsParser {
 
   public static void usage() {
     HelpFormatter formatter = new HelpFormatter();
-    formatter.printHelp("distcp OPTIONS [source_path...] <target_path>\n\nOPTIONS", cliOptions);
+    formatter.printHelp("distcp -copyIn[or -copyOut] OPTIONS [source_path...] <target_path>\n\nOPTIONS", cliOptions);
   }
 }

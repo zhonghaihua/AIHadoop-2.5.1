@@ -109,20 +109,25 @@ public class DistCp extends Configured implements Tool {
     }
 
     boolean hasFlag = false;
+    for (String arg : argv) {
+      if (arg.toLowerCase().contains("copyin") || arg.toLowerCase().contains("copyout")) {
+        hasFlag = true;
+      }
+    }
+    if (!hasFlag) {
+      OptionsParser.usage();
+      return DistCpConstants.INVALID_ARGUMENT;
+    }
+
     String[] newArgv = new String[argv.length - 1];
     for (int i = 0, j = 0; i < argv.length; i++) {
       if (argv[i].toLowerCase().contains("copyin") || argv[i].toLowerCase().contains("copyout")) {
-        hasFlag = true;
         if (argv[i].toLowerCase().contains("copyin")) {
           copyIn = true;
         }
         continue;
       }
       newArgv[j++] = argv[i];
-    }
-    if (!hasFlag) {
-      OptionsParser.usage();
-      return DistCpConstants.INVALID_ARGUMENT;
     }
     
     try {
@@ -136,6 +141,12 @@ public class DistCp extends Configured implements Tool {
           String originalPath = originalSourcePaths.get(i).toUri().getPath();
           sourcePaths[i] = originalPath;
         }
+        getConf().setBoolean("copyIn", copyIn);
+        getConf().setStrings("sourcePaths", sourcePaths);
+      } else {
+        String[] sourcePaths = new String[1];
+        Path path = inputOptions.getTargetPath();
+        sourcePaths[0] = path.toUri().getPath();
         getConf().setBoolean("copyIn", copyIn);
         getConf().setStrings("sourcePaths", sourcePaths);
       }
