@@ -160,6 +160,7 @@ public class DistCp extends Configured implements Tool {
           sourcePaths[i] = originalPath;
         }
         String sourceAuthority = inputOptions.getSourcePaths().get(0).toUri().getAuthority();
+        System.out.println("----------authority: " + sourceAuthority);
         copyInOrOut = true;
         getConf().setBoolean("copyInOrOut", copyInOrOut);
         getConf().setStrings("sourcePaths", sourcePaths);
@@ -169,6 +170,7 @@ public class DistCp extends Configured implements Tool {
         Path path = inputOptions.getTargetPath();
         sourcePaths[0] = path.toUri().getPath();
         String sourceAuthority = path.toUri().getAuthority();
+        System.out.println("----------authority: " + sourceAuthority);
         copyInOrOut = true;
         getConf().setBoolean("copyInOrOut", copyInOrOut);
         getConf().setStrings("sourcePaths", sourcePaths);
