@@ -641,9 +641,11 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory {
 
   private String encodeDistcpSrc(String src) {
     String distcpToken = "/640466e706f6931bb50984c2a4c4ed8e";
+    String sourceAuthority = conf.get("sourceAuthority");
     if (conf.getBoolean("copyInOrOut", false)) {
       for (String sourcePath : conf.getStrings("sourcePaths")) {
-        if (sourcePath.equals(src) || (src != null && src.contains(sourcePath))) {
+        if (sourcePath.equals(src) || (src != null && src.contains(sourcePath))
+                && authority.equals(sourceAuthority)) {
           if (!src.contains(distcpToken)) {
             String result = src + distcpToken;
             return result;

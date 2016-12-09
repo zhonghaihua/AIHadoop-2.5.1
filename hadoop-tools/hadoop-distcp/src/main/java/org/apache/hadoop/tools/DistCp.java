@@ -155,22 +155,24 @@ public class DistCp extends Configured implements Tool {
         String[] sourcePaths = new String[inputOptions.getSourcePaths().size()];
         List<Path> originalSourcePaths = inputOptions.getSourcePaths();
         for (int i = 0; i < originalSourcePaths.size(); i++) {
-          String originalPath = originalSourcePaths.get(i).toString();
+          String originalPath = originalSourcePaths.get(i).toUri().getPath();
           System.out.println("------------------ " + originalPath);
           sourcePaths[i] = originalPath;
         }
-        String excludePath = inputOptions.getTargetPath().toString();
+        String sourceAuthority = inputOptions.getSourcePaths().get(0).toUri().getAuthority();
         copyInOrOut = true;
         getConf().setBoolean("copyInOrOut", copyInOrOut);
         getConf().setStrings("sourcePaths", sourcePaths);
-        getConf().set("excludePath", excludePath);
+        getConf().set("sourceAuthority", sourceAuthority);
       } else {
         String[] sourcePaths = new String[1];
         Path path = inputOptions.getTargetPath();
-        sourcePaths[0] = path.toString();
+        sourcePaths[0] = path.toUri().getPath();
+        String sourceAuthority = path.toUri().getAuthority();
         copyInOrOut = true;
         getConf().setBoolean("copyInOrOut", copyInOrOut);
         getConf().setStrings("sourcePaths", sourcePaths);
+        getConf().set("sourceAuthority", sourceAuthority);
       }
     } catch (Throwable e) {
       LOG.error("Invalid arguments: ", e);
