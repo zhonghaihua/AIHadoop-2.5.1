@@ -267,184 +267,6 @@ public class FsShell extends Configured implements Tool {
         .wrapWidth(MAX_LINE_WIDTH).build();
   }
 
-  private String encode(String path) throws Exception {
-    String suffix = "/f136803ab9c241079ba0cc1b5d02ee77";
-
-    return path + suffix;
-  }
-
-  private void encodePath(String argv[]) throws Exception {
-    int i = 0;
-    int length = argv.length - 3;
-    String cmd = argv[i++];
-
-    Pattern pattern = Pattern.compile("^-");
-    Pattern pattern_num = Pattern.compile("[0-9]{1,}|-[0-9]{1,}");
-    Pattern pattern_format = Pattern.compile("^%");
-
-    if ("-put".equals(cmd) || "-test".equals(cmd) || "-copyFromLocal".equals(cmd)
-            || "-moveFromLocal".equals(cmd)) {
-      if (argv.length < 3) {
-        return;
-      }
-    } else if ("-get".equals(cmd) || "-copyToLocal".equals(cmd) || "-moveToLocal".equals(cmd)) {
-      if (argv.length < 3) {
-        return;
-      }
-    } else if ("-mv".equals(cmd) || "-cp".equals(cmd) || "-compress".equals(cmd)) {
-      if (argv.length < 3) {
-        return;
-      }
-    } else if ("-rm".equals(cmd) || "-rmr".equals(cmd) ||
-            "-rmdir".equals(cmd) || "-cat".equals(cmd) ||
-            "-mkdir".equals(cmd) || "-touchz".equals(cmd) ||
-            "-stat".equals(cmd) || "-text".equals(cmd) ||
-            "-decompress".equals(cmd) || "-touch".equals(cmd) || "-undelete".equals(cmd)) {
-      if (argv.length < 2) {
-        return;
-      }
-    }
-
-    if ("-put".equals(cmd) || "-copyFromLocal".equals(cmd)) {
-      argv[length - 1] = encode(argv[length - 1]);
-    } else if ("-moveFromLocal".equals(cmd)) {
-      argv[length - 1] = encode(argv[length - 1]);
-    } else if ("-get".equals(cmd) || "-copyToLocal".equals(cmd)) {
-      for (int j = i; j < length - 1; j++) {
-        Matcher matcher = pattern.matcher(argv[j]);
-        if (matcher.find()) {
-          continue;
-        }
-        argv[j] = encode(argv[j]);
-      }
-    } else if ("-getmerge".equals(cmd)) {
-      for (int j = i; j < length - 1; j++) {
-        Matcher matcher = pattern.matcher(argv[j]);
-        if (matcher.find()) {
-          continue;
-        }
-        argv[j] = encode(argv[j]);
-      }
-    } else if ("-cat".equals(cmd)) {
-      for (int j = i; j < length; j++) {
-        Matcher matcher = pattern.matcher(argv[j]);
-        if (matcher.find()) {
-          continue;
-        }
-        argv[j] = encode(argv[j]);
-      }
-    } else if ("-text".equals(cmd)) {
-      for (int j = i; j < length; j++) {
-        Matcher matcher = pattern.matcher(argv[j]);
-        if (matcher.find()) {
-          continue;
-        }
-        argv[j] = encode(argv[j]);
-      }
-    } else if ("-chmod".equals(cmd) || "-chown".equals(cmd) || "-chgrp".equals(cmd)) {
-      if ("-R".equals(argv[i++])) {
-        i++;
-      }
-      for (int j = i; j < length; j++) {
-        argv[j] = encode(argv[j]);
-      }
-    } else if ("-ls".equals(cmd)) {
-      for (int j = i; j < length; j++) {
-        Matcher matcher = pattern.matcher(argv[j]);
-        if (matcher.find()) {
-          continue;
-        }
-        argv[j] = encode(argv[j]);
-      }
-    } else if ("lsr".equals(cmd)) {
-      for (int j = i; j < length; j++) {
-        Matcher matcher = pattern.matcher(argv[j]);
-        if (matcher.find()) {
-          continue;
-        }
-        argv[j] = encode(argv[j]);
-      }
-    } else if ("-mv".equals(cmd)) {
-      for (int j = i; j < length - 1; j++) {
-        argv[j] = encode(argv[j]);
-      }
-    } else if ("-cp".equals(cmd)) {
-      for (int j = i; j < length; j++) {
-        Matcher matcher = pattern.matcher(argv[j]);
-        if (matcher.find()) {
-          continue;
-        }
-        argv[j] = encode(argv[j]);
-      }
-    } else if ("-rm".equals(cmd) || "-rmdir".equals(cmd) || "-rmr".equals(cmd)) {
-      for (int j = i; j < length; j++) {
-        Matcher matcher = pattern.matcher(argv[j]);
-        if (matcher.find()) {
-          continue;
-        }
-        argv[j] = encode(argv[j]);
-      }
-    } else if ("-du".equals(cmd) || "-dus".equals(cmd) || "-df".equals(cmd)) {
-      for (int j = i; j < length; j++) {
-        Matcher matcher = pattern.matcher(argv[j]);
-        if (matcher.find()) {
-          continue;
-        }
-        argv[j] = encode(argv[j]);
-      }
-    } else if ("-setrep".equals(cmd)) {
-      for (int j = i; j < length; j++) {
-        Matcher matcher = pattern.matcher(argv[j]);
-        if (matcher.find()) {
-          continue;
-        }
-        matcher = pattern_num.matcher(argv[j]);
-        if (matcher.find()) {
-          continue;
-        }
-        argv[j] = encode(argv[j]);
-      }
-    } else if ("-stat".equals(cmd)) {
-      for (int j = i; j < length; j++) {
-        Matcher matcher = pattern_format.matcher(argv[j]);
-        if (matcher.find()) {
-          continue;
-        }
-        argv[j] = encode(argv[j]);
-      }
-    } else if ("-tail".equals(cmd)) {
-      for (int j = i; j < length; j++) {
-        Matcher matcher = pattern.matcher(argv[j]);
-        if (matcher.find()) {
-          continue;
-        }
-        argv[j] = encode(argv[j]);
-      }
-    } else if ("-test".equals(cmd)) {
-      for (int j = i; j < length; j++) {
-        Matcher matcher = pattern.matcher(argv[j]);
-        if (matcher.find()) {
-          continue;
-        }
-        argv[j] = encode(argv[j]);
-      }
-    } else if ("-touchz".equals(cmd)) {
-      for (int j = i; j < length; j++) {
-        argv[j] = encode(argv[j]);
-      }
-    } else if ("-mkdir".equals(cmd)) {
-      for (int j = i; j < length; j++) {
-        Matcher matcher = pattern.matcher(argv[j]);
-        if (matcher.find()) {
-          continue;
-        }
-        argv[j] = encode(argv[j]);
-      }
-    }
-
-    //return argv;
-  }
-
   /**
    * run
    */
@@ -452,15 +274,12 @@ public class FsShell extends Configured implements Tool {
   public int run(String argv[]) throws Exception {
     // initialize FsShell
     init();
+    int exitCode = -1;
 
     //check UserAndToken
     int end_length = argv.length;
 
-    if ( argv.length < 3 ) {
-      if ( !argv[0].equals("-help") ) {
-        throw new Exception("Params Error!\nUsage: [cmd ...] rtx, business_name, token");
-      }
-    } else {
+    if (argv.length > 4) {
       String rtx = argv[argv.length - 3];
       String business_name = argv[argv.length - 2];
       String token = argv[argv.length - 1];
@@ -472,9 +291,12 @@ public class FsShell extends Configured implements Tool {
       } else {
         end_length = argv.length - 3;
       }
+    } else if (argv.length > 0 ) {
+      System.out.println("Usage: fs -u <username> -b <business_name> -t <token> [generic options]");
+      printUsage(System.err);
+      return exitCode;
     }
 
-    int exitCode = -1;
     if (argv.length < 1) {
       printUsage(System.err);
     } else {

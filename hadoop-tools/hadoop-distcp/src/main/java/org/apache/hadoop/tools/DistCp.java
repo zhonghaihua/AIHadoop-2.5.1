@@ -33,6 +33,7 @@ import org.apache.hadoop.tools.CopyListing.*;
 import org.apache.hadoop.tools.mapred.CopyMapper;
 import org.apache.hadoop.tools.mapred.CopyOutputFormat;
 import org.apache.hadoop.tools.util.DistCpUtils;
+import org.apache.hadoop.util.HadoopAuth;
 import org.apache.hadoop.util.ShutdownHookManager;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
@@ -120,8 +121,23 @@ public class DistCp extends Configured implements Tool {
       return DistCpConstants.INVALID_ARGUMENT;
     }
 
-    String[] newArgv = new String[argv.length - 1];
-    for (int i = 0, j = 0; i < argv.length; i++) {
+    // verify user
+    String[] userArgs = new String[3];
+    userArgs[0] = argv[0];
+    userArgs[1] = argv[1];
+    userArgs[2] = argv[2];
+    HadoopAuth auth = new HadoopAuth(userArgs);
+
+    try {
+      if(!auth.verify()) {
+        System.out.println("auth failed !");
+      }
+    } catch (Exception e) {
+      System.out.println("auth failed, details: " + e.getMessage());
+    }
+
+    String[] newArgv = new String[argv.length - 4];
+    for (int i = 3, j = 0; i < argv.length; i++) {
       if (argv[i].toLowerCase().contains("copyin") || argv[i].toLowerCase().contains("copyout")) {
         if (argv[i].toLowerCase().contains("copyin")) {
           copyIn = true;
