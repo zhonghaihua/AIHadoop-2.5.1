@@ -156,11 +156,14 @@ public class DistCp extends Configured implements Tool {
         List<Path> originalSourcePaths = inputOptions.getSourcePaths();
         for (int i = 0; i < originalSourcePaths.size(); i++) {
           String originalPath = originalSourcePaths.get(i).toUri().getPath();
+          System.out.println("------------------ " + originalPath);
           sourcePaths[i] = originalPath;
         }
+        String excludePath = inputOptions.getTargetPath().toUri().getPath();
         copyInOrOut = true;
         getConf().setBoolean("copyInOrOut", copyInOrOut);
         getConf().setStrings("sourcePaths", sourcePaths);
+        getConf().set("excludePath", excludePath);
       } else {
         String[] sourcePaths = new String[1];
         Path path = inputOptions.getTargetPath();
