@@ -144,6 +144,20 @@ public abstract class PipeMapRed {
     return (String[]) argList.toArray(new String[0]);
   }
 
+  static String[] handleArg(String[] args) {
+    String[] newArgs = new String[args.length];
+    for (int i = 0; i < args.length; i++) {
+      String arg = args[i];
+      if (arg.endsWith("\\")) {
+        String newArg = arg.substring(0, arg.length() - 1);
+        newArgs[i] = newArg;
+      } else {
+        newArgs[i] = arg;
+      }
+    }
+    return newArgs;
+  }
+
   public void configure(JobConf job) {
     try {
       String argv = getPipeCommand(job);
@@ -172,7 +186,8 @@ public abstract class PipeMapRed {
       setStreamJobDetails(job);
 
       LOG.info("PipeMapRed exec " + Arrays.asList(argv));
-      String[] argvSplit = splitArgs(argv);
+      String[] oldArgvSplit = splitArgs(argv);
+      String[] argvSplit = handleArg(oldArgvSplit);
       String prog = argvSplit[0];
       File currentDir = new File(".").getAbsoluteFile();
       if (new File(prog).isAbsolute()) {
