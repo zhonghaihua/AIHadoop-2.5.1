@@ -170,7 +170,8 @@ public abstract class PipeMapRed {
       if (!doPipe_) return;
 
       setStreamJobDetails(job);
-      
+
+      LOG.info("PipeMapRed exec " + Arrays.asList(argv));
       String[] argvSplit = splitArgs(argv);
       String prog = argvSplit[0];
       File currentDir = new File(".").getAbsoluteFile();
